@@ -1,1 +1,16 @@
-theme: jekyll-theme-minimal
+baseurl: /
+title: Automatic Code Generation for Programming Tasks
+subtitle: Documentation
+author: Alexandru Dinu
+simple_search: http://google.com/search
+description: Documentation for Code Generation repositories
+name: code-gen
+markdown_ext: "markdown,mkdown,mkdn,mkd,md"
+post:
+  template: _post.txt
+  extension: md
+page:
+  template: _page.txt
+  extension: md
+git:
+  branch: master
