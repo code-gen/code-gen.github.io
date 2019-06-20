@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Contents
+title: Automatic Code Generation for Programming Tasks
 ---
 
 ## [Data Exploration](contents/data-exploration/)
