@@ -5,19 +5,18 @@ title: Data Exploration
 
 # 1. Sketch generation
 
-### Usage
-
-Sketch generation is done by the `Sketch` class in
-[`preprocess/sketch_generation.py`](https://github.com/code-gen/data-exploration/blob/master/preprocess/sketch_generation.py).
 For testing purposes, one might run the script standalone, as:
 
 `python sketch_generation.py <code_snippet>`
 
 for example:
 
-`python sketch_generation.py "xs = [f(x) for f, x in self.get('func', 10)]"`
+```
+$ python sketch_generation.py "xs = [f(x) for f, x in self.get('func', 10)]"
+NAME = [ FUNC#1 ( NAME ) for FUNC#1 , NAME in self . FUNC#2 ( STRING , NUMBER ) ]
+```
 
-Usage in pre-processing stage:
+Using it in a pre-processing stage:
 
 ```python
 from sketch_generation import Sketch
@@ -29,13 +28,11 @@ print(sketch)
 
 ### Algorithm
 
-- keep Python keywords as is
+- keep reserved Python keywords as is
 - strip off arguments and variable names
 - substitute literals with their types: `NUMBER` or `STRING`
 - specialize `NAME` token for functions: `FUNC#<arity>`
-
-Refining `NAME` to `FUNC#<arity>` is done by traversing the AST generated for the code snippet
-and querying nodes of type `ast.Call`: name and `len(args)` is extracted.
+    - done by traversing the AST generated for the code snippet and querying nodes of type `ast.Call`: name and `len(args)` is extracted.
 
 **Examples**
 
@@ -55,7 +52,7 @@ NAME = [ NAME for NAME in FUNC#1 ( NAME ) if NAME % NUMBER == NUMBER ]
 The fine-tune process makes use of the [mittens](https://github.com/roamanalytics/mittens) framework.
 {% include sidenote.html id="note-glove" note="For the moment, only GloVe embeddings are considered."%}
 Mittens extends GloVe in a retrofitting model, by adding a regularization term $$\mu$$, which penalizes the distance between
-an original ($$\widehat{w_i} = w_i + \tilde{w_i}$$) and a new word vector ($$r_i$$),
+an original ($$\widehat{w_i} = w_i + \tilde{w_i}$$) and a new ($$r_i$$) word vector,
 with the goal of keeping the new embedding close to the original one:
 
 $$J_{Mittens} = J_{GloVe} + \mu \sum_{i \in V} \left \lVert \widehat{w_i} - r_i \right \rVert ^2$$
@@ -77,36 +74,17 @@ where $$w$$ is the combined word vector, $$w_{orig}$$ is the pre-trained word ve
 
 ### Usage
 
-The script that performs the fine-tuning is [`emb_fine_tune/glove_fine_tune.py`](https://github.com/code-gen/data-exploration/blob/master/emb_fine_tune/glove_fine_tune.py).
-One may run it using a bash script, for example:
-
-```bash
-base_dir=$(dirname "$(readlink -f $0)")
-
-python emb_fine_tune/glove_fine_tune.py \
-    -root_dir ${base_dir}/../embeddings \
-    -data_source ${base_dir}/../corpus/python-stackoverflow/question_words_clean.pickle \
-    -exp_name python-so \
-    -pt_emb_file ${base_dir}/../embeddings/glove.6B.200d.txt \
-    -num_ft_iter 10000 \
-    -vocab_size 10000 \
-    -window_size 7 \
-    -min_freq 10 \
-    -mu 0.1 \
-    -only_in_emb
-```
-
-Arguments are:
+Arguments:
 
 ```
 -root_dir       ROOT_DIR        Root directory used to store files
 -data_source    DATA_SOURCE     Path to dir with files OR file listing (for corpus)
 -exp_name       EXP_NAME        Name for current experiment (%Y-%m-%d_%H-%M-%S timestamp will be automatically prepended)
 -pt_emb_file    PT_EMB_FILE     Pre-trained embeddings file
--num_ft_iter    NUM_FT_ITER     Number of fine-tuning iterations
--vocab_size     VOCAB_SIZE      Number of unique words to consider (at most!)
--window_size    WINDOW_SIZE
--min_freq       MIN_FREQ        Consider words with frequency >= min_freq
+-num_ft_iter    NUM_FT_ITER     Number of fine-tuning iterations (default = 1000)
+-vocab_size     VOCAB_SIZE      Number of unique words to consider (at most!) (default = 20000)
+-window_size    WINDOW_SIZE     Consider words in window (w_i-N ... w_i ... w_i+N) (default = 5)
+-min_freq       MIN_FREQ        Consider words with frequency >= min_freq (default = 1)
 -mu             MU              Regularization factor (mu from mittens paper) (default = 0.1)
 -only_in_emb    If true, only use words that already exist in the pre-trained embeddings
 ```
@@ -124,7 +102,44 @@ folder named `2019-05-14_18-19-19-python-so-200`, containing:
 
 # 3. Data pre-processing
 
+Pre-processing scripts will generate train / dev / test splits for the dataset.
+This stage also includes sketch generation and input sanitization.
+
+Output format follows Coarse-to-Fine model: token = actual code, type = sketch, src = intent.
+
 ### Django
 
+Arguments:
+```
+-in_dir     IN_DIR      -- input directory containing all.code and all.anno files
+-out_dir    OUT_DIR     -- output directory where {train/dev/test}.json files will be dumped
+-dev_split  DEV_SPLIT   -- % of all examples to use for validation (default = 0.05)
+-test_split TEST_SPLIT  -- % of all examples to use for testing (default = 0.1)
+```
+
+Sanitization consists of:
+- replacing all string literals with `_STR:<n>_` where `n` is the index of the string in the intent (zero-based)
+- removing stray / weird chars from the intent
+
+Final training example:
+```
+{
+    "token": ["decimal_separator", "=", "get_format", "(", "\" _STR:0_ \"", ")"],
+    "type" : ["NAME", "=", "FUNC#1", "(", "STRING", ")"],
+    "src"  : ["call", "the", "function", "get_format", "with", "an", "argument", "string", "_STR:0_", "substitute", "the", "result", "for", "decimal_separator"]
+}
+
+```
 
 ### CoNaLa
+
+CoNaLa pre-processing is similar to Django's, but without `_STR:<n>_` markers.
+
+Final training example:
+```
+{
+    "token": ["[", "x", "for", "x", "in", "file", ".", "namelist", "(", ")", "if", "x", ".", "endswith", "(", "'/'", ")", "]"],
+    "type" : ["[", "NAME", "for", "NAME", "in", "NAME", ".", "FUNC#0", "(", ")", "if", "NAME", ".", "FUNC#1", "(", "STRING", ")", "]"]
+    "src"  : ["list", "folders", "in", "zip", "file", "'file'", "that", "ends", "with", "'/'"],
+}
+```
