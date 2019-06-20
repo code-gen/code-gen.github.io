@@ -146,3 +146,11 @@ Final training example:
     "src"  : ["list", "folders", "in", "zip", "file", "'file'", "that", "ends", "with", "'/'"],
 }
 ```
+
+---
+
+## Mining docstrings
+
+---
+
+## Code equivalence
