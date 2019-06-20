@@ -5,10 +5,10 @@ $body-font: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Ant
 // However, it is not a free font, so if it is not present on the computer that is viewing the webpage
 // The free Google 'Lato' font is used instead. It is similar.
 $sans-font: "Gill Sans", "Gill Sans MT", "Lato", Calibri, sans-serif;
-$code-font: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+$code-font: "Source Code Pro"; //, Consolas, "Liberation Mono", Menlo, Courier, monospace;
 $url-font: "Lucida Console", "Lucida Sans Typewriter", Monaco, "Bitstream Vera Sans Mono", monospace;
 $text-color: #111;
 $bg-color: #fffff8;
-$contrast-color: #a00000;
+$contrast-color: #0f4162;
 $border-color: #333333;
 $link-style: underline; // choices are 'color' or 'underline'. Default is color using $contrast-color set above

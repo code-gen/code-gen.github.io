@@ -3,7 +3,7 @@ layout: post
 title: Data Exploration
 ---
 
-# 1. Sketch generation
+## Sketch generation
 
 For testing purposes, one might run the script standalone, as:
 
@@ -31,8 +31,7 @@ print(sketch)
 - keep reserved Python keywords as is
 - strip off arguments and variable names
 - substitute literals with their types: `NUMBER` or `STRING`
-- specialize `NAME` token for functions: `FUNC#<arity>`
-    - done by traversing the AST generated for the code snippet and querying nodes of type `ast.Call`: name and `len(args)` is extracted.
+- specialize `NAME` token for functions: `FUNC#<arity>`; done by traversing the AST generated for the code snippet and querying nodes of type `ast.Call`: name and `len(args)` is extracted.
 
 **Examples**
 
@@ -47,7 +46,9 @@ result = [x for x in DoWork(xs) if x % 2 == 0]
 NAME = [ NAME for NAME in FUNC#1 ( NAME ) if NAME % NUMBER == NUMBER ]
 ```
 
-# 2. Fine-tune word embeddings
+---
+
+## Fine-tune word embeddings
 
 The fine-tune process makes use of the [mittens](https://github.com/roamanalytics/mittens) framework.
 {% include sidenote.html id="note-glove" note="For the moment, only GloVe embeddings are considered."%}
@@ -70,7 +71,7 @@ After having constructed the fine-tuned vector, the final fine-tuned embedding s
 $$w = \alpha \cdot w_{orig} + \beta \cdot w_{ft}$$
 
 where $$w$$ is the combined word vector, $$w_{orig}$$ is the pre-trained word vector, $$w_{ft}$$ is the fine-tuned word vector, and $$\alpha, \beta$$ are weighting constants, with $$\alpha + \beta = 1$$.
-{% include sidenote.html id="note-ft" note="In most of our experiments, we have found that the best performance is achieved with $$\alpha \in [0.05, 0.2]$$ and $$\beta \in [0.8, 0.95]$$. Also, after some exploratory data analysis, we have considered the top $$8,000$$ most frequent words in the corpus, the window size $$\in \{5, 7\}$$, regularization factor $$\mu = 0.1$$, and training for $$10,000$$ iterations." %}
+{% include sidenote.html id="note-ft" note="In most of our experiments, we have found that the best performance is achieved with $$\alpha \in [0.05, 0.2]$$ and $$\beta \in [0.8, 0.95]$$. Also, after some exploratory data analysis, we have considered the top $$8,000$$ most frequent words in the corpus, window size $$\in \{5, 7\}$$, regularization factor $$\mu = 0.1$$, training for $$10,000$$ iterations." %}
 
 ### Usage
 
@@ -100,7 +101,9 @@ folder named `2019-05-14_18-19-19-python-so-200`, containing:
 └── python-so.vocab     # vocabulary: Dict[str, int]
 ```
 
-# 3. Data pre-processing
+---
+
+## Data pre-processing
 
 Pre-processing scripts will generate train / dev / test splits for the dataset.
 This stage also includes sketch generation and input sanitization.
