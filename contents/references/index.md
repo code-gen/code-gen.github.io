@@ -3,6 +3,11 @@ layout: post
 title: References
 ---
 
+### Models
+
+- [Coarse-to-Fine](https://github.com/donglixp/coarse2fine) / [Paper](https://arxiv.org/pdf/1805.04793.pdf)
+- [TranX](https://github.com/pcyin/tranX) / [Paper](https://arxiv.org/pdf/1810.02720.pdf)
+
 ### Word embeddings
 
 - [Mittens](https://github.com/roamanalytics/mittens) / [Paper](https://arxiv.org/pdf/1803.09901.pdf)

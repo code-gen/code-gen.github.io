@@ -47,7 +47,7 @@ result = [x for x in DoWork(xs) if x % 2 == 0]
 NAME = [ NAME for NAME in FUNC#1 ( NAME ) if NAME % NUMBER == NUMBER ]
 ```
 
-# 2. Fine-tuning word embeddings
+# 2. Fine-tune word embeddings
 
 The fine-tune process makes use of the [mittens](https://github.com/roamanalytics/mittens) framework.
 {% include sidenote.html id="note-glove" note="For the moment, only GloVe embeddings are considered."%}
@@ -94,10 +94,10 @@ folder named `2019-05-14_18-19-19-python-so-200`, containing:
 
 ```
 2019-05-14_18-19-19-python-so-200
-├── config.txt          -- dump of fine-tune settings
-├── python-so.emb       -- fine-tuned embeddings (mittens' output)
-├── python-so.mat       -- co-occurrence matrix: N x N numpy array, dtype=uint16
-└── python-so.vocab     -- vocabulary: Dict[str, int]
+├── config.txt          # dump of fine-tune settings
+├── python-so.emb       # fine-tuned embeddings (mittens' output)
+├── python-so.mat       # co-occurrence matrix: N x N numpy array, dtype=uint16
+└── python-so.vocab     # vocabulary: Dict[str, int]
 ```
 
 # 3. Data pre-processing
@@ -111,10 +111,10 @@ Output format follows Coarse-to-Fine model: token = actual code, type = sketch, 
 
 Arguments:
 ```
--in_dir     IN_DIR      -- input directory containing all.code and all.anno files
--out_dir    OUT_DIR     -- output directory where {train/dev/test}.json files will be dumped
--dev_split  DEV_SPLIT   -- % of all examples to use for validation (default = 0.05)
--test_split TEST_SPLIT  -- % of all examples to use for testing (default = 0.1)
+-in_dir     IN_DIR      # input directory containing all.code and all.anno files
+-out_dir    OUT_DIR     # output directory where {train, dev, test}.json files will be dumped
+-dev_split  DEV_SPLIT   # % of all examples to use for validation (default = 0.05)
+-test_split TEST_SPLIT  # % of all examples to use for testing (default = 0.1)
 ```
 
 Sanitization consists of:
