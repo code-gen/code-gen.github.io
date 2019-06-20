@@ -78,16 +78,16 @@ where $$w$$ is the combined word vector, $$w_{orig}$$ is the pre-trained word ve
 Arguments:
 
 ```
--root_dir       ROOT_DIR        Root directory used to store files
--data_source    DATA_SOURCE     Path to dir with files OR file listing (for corpus)
--exp_name       EXP_NAME        Name for current experiment (%Y-%m-%d_%H-%M-%S timestamp will be automatically prepended)
--pt_emb_file    PT_EMB_FILE     Pre-trained embeddings file
--num_ft_iter    NUM_FT_ITER     Number of fine-tuning iterations (default = 1000)
--vocab_size     VOCAB_SIZE      Number of unique words to consider (at most!) (default = 20000)
--window_size    WINDOW_SIZE     Consider words in window (w_i-N ... w_i ... w_i+N) (default = 5)
--min_freq       MIN_FREQ        Consider words with frequency >= min_freq (default = 1)
--mu             MU              Regularization factor (mu from mittens paper) (default = 0.1)
--only_in_emb    If true, only use words that already exist in the pre-trained embeddings
+-root_dir    # root directory used to store files
+-data_source # path to dir with files OR file listing (for corpus)
+-exp_name    # experiment name (%Y-%m-%d_%H-%M-%S timestamp will be automatically prepended)
+-pt_emb_file # pre-trained embeddings file
+-num_ft_iter # number of fine-tuning iterations (default = 1000)
+-vocab_size  # number of unique words to consider (at most!) (default = 20000)
+-window_size # consider words in window (w_i-N ... w_i ... w_i+N) (default = 5)
+-min_freq    # consider words with frequency >= min_freq (default = 1)
+-mu          # regularization factor (mu from mittens paper) (default = 0.1)
+-only_in_emb # if true, only use words that already exist in the pre-trained embeddings
 ```
 
 For example, fine-tuning GloVe (`glove.6B.200d.txt`) on Python questions from StackOverflow results in an experiment
@@ -95,10 +95,10 @@ folder named `2019-05-14_18-19-19-python-so-200`, containing:
 
 ```
 2019-05-14_18-19-19-python-so-200
-├── config.txt          # dump of fine-tune settings
-├── python-so.emb       # fine-tuned embeddings (mittens' output)
-├── python-so.mat       # co-occurrence matrix: N x N numpy array, dtype=uint16
-└── python-so.vocab     # vocabulary: Dict[str, int]
+├── config.txt      # dump of fine-tune settings
+├── python-so.emb   # fine-tuned embeddings (mittens output): (V x emb_dim) float32 numpy array
+├── python-so.mat   # co-occurrence matrix: (V x V) uint16 numpy array
+└── python-so.vocab # vocabulary: Dict[str, int]
 ```
 
 ---
@@ -114,10 +114,10 @@ Output format follows Coarse-to-Fine model: token = actual code, type = sketch, 
 
 Arguments:
 ```
--in_dir     IN_DIR      # input directory containing all.code and all.anno files
--out_dir    OUT_DIR     # output directory where {train, dev, test}.json files will be dumped
--dev_split  DEV_SPLIT   # % of all examples to use for validation (default = 0.05)
--test_split TEST_SPLIT  # % of all examples to use for testing (default = 0.1)
+-in_dir     # input directory containing all.code and all.anno files
+-out_dir    # output directory where {train, dev, test}.json files will be dumped
+-dev_split  # % of all examples to use for validation (default = 0.05)
+-test_split # % of all examples to use for testing (default = 0.1)
 ```
 
 Sanitization consists of:
