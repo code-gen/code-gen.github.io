@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Data Exploration
+title: Exploration
 ---
 
 ## Sketch generation
